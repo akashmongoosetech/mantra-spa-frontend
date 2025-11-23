@@ -1,14 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Clock, ArrowLeft, CheckCircle } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
-import { services } from '../data/services';
+import { servicesAPI, Service } from '../services/api';
 
 const ServiceDetail = () => {
     const { id } = useParams();
-    const service = services.find(s => s.id === id);
+    const [service, setService] = useState<Service | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    if (!service) {
+    useEffect(() => {
+        const fetchService = async () => {
+            try {
+                const response = await servicesAPI.getById(id!);
+                setService(response.data);
+            } catch (err) {
+                setError('Service not found');
+                console.error('Error fetching service:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchService();
+        }
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="bg-background min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-text/60">Loading service...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !service) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">

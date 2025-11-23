@@ -1,11 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Award, Heart, Star } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import TherapistCard from '../components/TherapistCard';
-import { therapists } from '../data/therapists';
-import { testimonials } from '../data/testimonials';
+import { therapistsAPI, testimonialsAPI, Therapist, Testimonial } from '../services/api';
 
 const Therapists = () => {
+    const [therapists, setTherapists] = useState<Therapist[]>([]);
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [therapistsRes, testimonialsRes] = await Promise.all([
+                    therapistsAPI.getAll(),
+                    testimonialsAPI.getAll()
+                ]);
+                setTherapists(therapistsRes.data);
+                setTestimonials(testimonialsRes.data);
+            } catch (err) {
+                setError('Failed to load data');
+                console.error('Error fetching data:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="bg-background min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-text/60">Loading therapists...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-background min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="bg-primary text-white px-6 py-2 rounded-lg"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-background">
             <PageHeader

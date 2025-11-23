@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, User, Mail, Phone, MessageSquare } from 'lucide-react';
-import { services } from '../data/services';
-import { therapists } from '../data/therapists';
+import { servicesAPI, therapistsAPI, bookingsAPI, Service, Therapist } from '../services/api';
 
 const BookingForm = () => {
     const navigate = useNavigate();
@@ -16,12 +15,43 @@ const BookingForm = () => {
         phone: '',
         notes: ''
     });
+    const [services, setServices] = useState<Service[]>([]);
+    const [therapists, setTherapists] = useState<Therapist[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [servicesRes, therapistsRes] = await Promise.all([
+                    servicesAPI.getAll(),
+                    therapistsAPI.getAll()
+                ]);
+                setServices(servicesRes.data);
+                setTherapists(therapistsRes.data);
+            } catch (err) {
+                setError('Failed to load services and therapists');
+                console.error('Error fetching data:', err);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, we would submit data to backend here
-        console.log('Booking Data:', formData);
-        navigate('/thank-you');
+        setLoading(true);
+        setError(null);
+
+        try {
+            await bookingsAPI.create(formData);
+            navigate('/thank-you');
+        } catch (err) {
+            setError('Failed to submit booking. Please try again.');
+            console.error('Error submitting booking:', err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -30,6 +60,14 @@ const BookingForm = () => {
             [e.target.name]: e.target.value
         });
     };
+
+    if (error) {
+        return (
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-secondary/20">
+                <p className="text-red-500 text-center">{error}</p>
+            </div>
+        );
+    }
 
     return (
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-secondary/20">
@@ -183,9 +221,10 @@ const BookingForm = () => {
 
             <button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-4 rounded-lg transition-colors"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Confirm Booking
+                {loading ? 'Submitting...' : 'Confirm Booking'}
             </button>
         </form>
     );

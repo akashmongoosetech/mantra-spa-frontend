@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Activity, Clock, Award, CheckCircle, Zap, Brain, Heart, Quote } from 'lucide-react';
 import HeroBanner from '../components/HeroBanner';
@@ -7,10 +7,26 @@ import TherapistCard from '../components/TherapistCard';
 import TestimonialCard from '../components/TestimonialCard';
 import FAQAccordion from '../components/FAQAccordion';
 import { services } from '../data/services';
-import { therapists } from '../data/therapists';
-import { testimonials } from '../data/testimonials';
+import { therapistsAPI, testimonialsAPI, Therapist, Testimonial } from '../services/api';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 const Home = () => {
+    const [therapists, setTherapists] = useState<Therapist[]>([]);
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+    useEffect(() => {
+        therapistsAPI.getAll()
+            .then(res => setTherapists(res.data))
+            .catch(err => console.error('Error fetching therapists:', err));
+
+        testimonialsAPI.getAll()
+            .then(res => setTestimonials(res.data))
+            .catch(err => console.error('Error fetching testimonials:', err));
+    }, []);
+
     const featuredServices = services.slice(0, 3);
 
     return (
@@ -288,11 +304,19 @@ const Home = () => {
                         <h2 className="text-3xl md:text-4xl font-serif font-bold text-dark mb-4">Client Stories</h2>
                         <p className="text-text/80 text-lg">Hear from men who have made Mantra part of their routine.</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <Swiper
+                        modules={[Navigation]}
+                        spaceBetween={30}
+                        slidesPerView={1}
+                        navigation
+                        className="pb-8"
+                    >
                         {testimonials.map(testimonial => (
-                            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+                            <SwiperSlide key={testimonial.id}>
+                                <TestimonialCard testimonial={testimonial} />
+                            </SwiperSlide>
                         ))}
-                    </div>
+                    </Swiper>
                 </div>
             </section>
 

@@ -1,18 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Activity, Zap, Moon, Plus, Check, ArrowRight, Star } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import ServiceCard from '../components/ServiceCard';
-import { services } from '../data/services';
-import { testimonials } from '../data/testimonials';
+import { servicesAPI, testimonialsAPI, Service, Testimonial } from '../services/api';
 
 const Services = () => {
+    const [services, setServices] = useState<Service[]>([]);
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
     const enhancements = [
         { name: 'Cupping Therapy', price: 25, description: 'Increases blood circulation and relieves muscle tension.' },
         { name: 'CBD Oil Integration', price: 30, description: 'Reduces inflammation and promotes deeper relaxation.' },
         { name: 'Hot Stone Therapy', price: 20, description: 'Melts away tension and eases muscle stiffness.' },
         { name: 'Percussion Therapy', price: 15, description: 'Rapid bursts of pressure to flush out lactic acid.' },
     ];
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [servicesRes, testimonialsRes] = await Promise.all([
+                    servicesAPI.getAll(),
+                    testimonialsAPI.getAll()
+                ]);
+                setServices(servicesRes.data);
+                setTestimonials(testimonialsRes.data);
+            } catch (err) {
+                setError('Failed to load data');
+                console.error('Error fetching data:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="bg-background min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-text/60">Loading services...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-background min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="bg-primary text-white px-6 py-2 rounded-lg"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-background">

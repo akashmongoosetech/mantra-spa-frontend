@@ -28,6 +28,7 @@ const Navbar = () => {
     { name: 'Gallery', path: '/gallery' },
     { name: 'Therapists', path: '/therapists' },
     { name: 'Contact', path: '/contact' },
+    { name: 'Blog', path: '/blog' },
   ];
 
   return (
