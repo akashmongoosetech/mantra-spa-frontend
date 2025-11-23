@@ -1,4 +1,4 @@
-import { Divide, Droplets, Flame, Flower2, Heart, Sparkles } from 'lucide-react';
+import { Divide, Droplets, Flame, Flower2, Heart, Sparkles, Users } from 'lucide-react';
 
 export interface Service {
     id: string;
@@ -64,5 +64,68 @@ export const services: Service[] = [
         duration: 60,
         image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80',
         icon: Heart
+    },
+    {
+        id: 'scalp-rescue',
+        title: 'Scalp Rescue',
+        description: 'Targeted relief for headaches, migraines, and neck tension. A focused treatment that clears the mind.',
+        price: 65,
+        duration: 30,
+        image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&q=80',
+        icon: Sparkles
+    },
+    {
+        id: 'reflexology-reset',
+        title: 'Reflexology Reset',
+        description: 'Ancient pressure point therapy for the feet that restores balance to the entire body and nervous system.',
+        price: 75,
+        duration: 45,
+        image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80',
+        icon: Flower2
+    },
+    {
+        id: 'ultimate-detox',
+        title: 'The Ultimate Detox',
+        description: 'Lymphatic drainage techniques combined with dry brushing to boost immunity and reduce inflammation.',
+        price: 130,
+        duration: 75,
+        image: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&q=80',
+        icon: Droplets
+    },
+    {
+        id: 'aromatherapy-bliss',
+        title: 'Aromatherapy Bliss',
+        description: 'Essential oils combined with gentle massage to promote emotional balance and physical relaxation.',
+        price: 95,
+        duration: 60,
+        image: 'https://images.unsplash.com/photo-1596178060810-fb4bd482ee2c?auto=format&fit=crop&q=80',
+        icon: Flower2
+    },
+    {
+        id: 'prenatal-relief',
+        title: 'Prenatal Relief',
+        description: 'Specialized massage for expectant mothers to alleviate pregnancy discomfort and promote well-being.',
+        price: 105,
+        duration: 60,
+        image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&q=80',
+        icon: Heart
+    },
+    {
+        id: 'couples-retreat',
+        title: 'Couples Retreat',
+        description: 'Intimate session for two, fostering connection and relaxation in a private setting.',
+        price: 180,
+        duration: 60,
+        image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80',
+        icon: Users
+    },
+    {
+        id: 'hot-stone-therapy',
+        title: 'Hot Stone Therapy',
+        description: 'Smooth, heated stones placed on key points to melt away tension and ease muscle stiffness.',
+        price: 115,
+        duration: 75,
+        image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80',
+        icon: Flame
     }
 ];
